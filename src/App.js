@@ -1,49 +1,79 @@
-import Card from  './components/Card'
-import Header from './components/Header'
-import Drawer from './components/Drawer'
-
-const sneakers = [
-  {id: 1, name: 'Мужские Кроссовки Nike Blazer Mid Suede', price: 12999, image: '/img/image1.png'},
-  {id: 2, name: 'Мужские Кроссовки Nike Air Max 270', price: 13999, image: '/img/image2.png'},
-  {id: 3, name: 'Мужские Кроссовки Nike Blazer Mid Suede', price: 16999, image: '/img/image3.png'},
-  {id: 4, name: 'Кроссовки Puma X Aka Boku Future Rider', price: 8999, image: '/img/image4.png'},
-  {id: 5, name: 'Мужские Кроссовки Under Armour Curry 8', price: 11999, image: '/img/image5.png'},
-  {id: 6, name: 'Мужские Кроссовки Nike Kyrie 7', price: 10999, image: '/img/image6.png'},
-  {id: 7, name: 'Мужские Кроссовки Jordan Air Jordan 11', price: 2999, image: '/img/image7.png'},
-  {id: 8, name: 'Мужские Кроссовки Nike LeBron XVIII', price: 72999, image: '/img/image8.png'},
-  {id: 9, name: 'Мужские Кроссовки Nike Blazer Mid Suede', price: 2999, image: '/img/image9.png'},
-  {id: 10, name: 'Мужские Кроссовки Nike Lebron XVIII Low', price: 2999, image: '/img/image10.png'},
-  {id: 11, name: 'Кроссовки Puma X Aka Boku Future Rider', price: 2999, image: '/img/image11.png'},
-  {id: 12, name: 'Мужские Кроссовки Nike Kyrie Flytrap IV', price: 2999, image: '/img/image12.png'}
-]
+import Home from "./page/Home"
+import Favorite from "./page/Favorite"
+import Header from "./components/Header"
+import Drawer from "./components/Drawer"
+import React from "react"
+import axios from "axios"
+import { Route } from "react-router"
 
 function App() {
+  const [cartOpen, setCartOpen] = React.useState(false)
+  const [cartItems, setCartItems] = React.useState([])
+  const [favorites, setFavorites] = React.useState([])
+  const [sneakers, setSneakers] = React.useState([])
+  const [searchValue, setSearchValue] = React.useState('')
+
+  React.useEffect(() => {
+    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/items').then(res => setSneakers(res.data))
+    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/cart').then(res => setCartItems(res.data))
+    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/favorites').then(res => setFavorites(res.data))
+  }, [])
+
+
+  const addItemCart = (product) => {
+    console.log(product)
+    if (cartItems.find(item => item.id === product.id)) {
+      setCartItems(prev => [...prev.filter(item => item.id !== product.id)])
+    } else {
+      axios.post('https://60d72ef5307c300017a5f6f8.mockapi.io/cart', product).then(res => setCartItems(prev => [...prev, res.data]))
+    }
+  }
+
+  const addToFavorites = (product) => {
+    if (favorites.find(item => item.id === product.id)) {
+      const mockapi_id = favorites.find(item => item.id === product.id)?.mockapi_id
+      axios.delete(`https://60d72ef5307c300017a5f6f8.mockapi.io/favorites/${mockapi_id}`).then(res => {
+        setFavorites(prev => [...prev.filter(item => item.id !== res.data.id)])
+      })
+    } else {
+      axios.post('https://60d72ef5307c300017a5f6f8.mockapi.io/favorites', product).then(res => setFavorites(prev => [...prev, res.data]))
+    }
+  }
+
+  const deleteCartItem = (product) => {
+    if (cartItems.find(item => item.id === product.id)) {
+      axios.delete(`https://60d72ef5307c300017a5f6f8.mockapi.io/cart/${product.mockapi_id}`).then(res => {
+        setCartItems(prev => [...prev.filter(item => item.id !== res.data.id)])
+      })
+    }
+  }
+
+  const onChangeInput = (e) => {
+    setSearchValue(e.target.value)
+  }
+
   return (
     <div className="wrapper">
-      <Drawer/>
-      <Header/>
-      <div className="content">
-        <div className="slider"></div>
-          <div className="content__head">
-            <h2 className="content__title">Все кроссовки</h2>
-            <div className="content__search">
-              <div className="search__icon"></div>
-              <input className="input__text" type="text" placeholder="Поиск..."/>
-            </div>
-          </div>
-          <div className="sneakers__wrapper">
-            {
-              sneakers.map((obj,index) => (
-                <Card
-                  name={obj.name}
-                  price={obj.price}
-                  image={obj.image}
-                  key={index}
-                />
-              ))
-            }
-          </div>
-      </div>
+      {cartOpen && <Drawer items={cartItems} onDelete={(product) => deleteCartItem(product)} onClose={() => setCartOpen(false)}/>}
+      <Header onClickCart={() => setCartOpen(true)}/>
+      <Route path="/" exact>
+        <Home
+          sneakers={sneakers}
+          searchValue={searchValue}
+          addItemCart={addItemCart}
+          addToFavorites={addToFavorites}
+          onChangeInput={onChangeInput}
+          favorites={favorites}
+          cartItems={cartItems}
+        />
+      </Route>
+      <Route path="/favorites" exact>
+        <Favorite 
+          sneakers={favorites}
+          addItemCart={addItemCart}
+          addToFavorites={addToFavorites}  
+        />
+      </Route>
     </div>
   );
 }

@@ -1,42 +1,24 @@
-function Drawer() {
+function Drawer(props) {
     return (
-        <div className="overlay" style={{display: 'none'}}>
-        <div className="drawer">
+        <div className="overlay" onClick={props.onClose}>
+        <div className="drawer" onClick={(e) => e.stopPropagation()}>
           <div className="drawer__head">
             <h2 className="section__title">Корзина</h2>
-            <div className="cart__item__btn"></div>
+            <div className="cart__item__btn" onClick={props.onClose}></div>
           </div>
           <div className="cart__wrapper">
-            <div className="cart__item">
-              <div className="cart__item__image">
-                <img width={70} height={70} src="/img/image1.png" alt="image1" />
-              </div>
-              <div className="cart__item__body">
-                <div className="cart__item__title">Мужские Кроссовки Nike Air Max 270</div>
-                <div className="cart__item__price">12 999 руб.</div>
-              </div>
-              <div className="cart__item__btn"></div>
-            </div>
-            <div className="cart__item">
-              <div className="cart__item__image">
-                <img width={70} height={70} src="/img/image2.png" alt="image1" />
-              </div>
-              <div className="cart__item__body">
-                <div className="cart__item__title">Мужские Кроссовки Nike Air Max 270</div>
-                <div className="cart__item__price">12 999 руб.</div>
-              </div>
-              <div className="cart__item__btn"></div>
-            </div>
-            <div className="cart__item">
-              <div className="cart__item__image">
-                <img width={70} height={70} src="/img/image3.png" alt="image1" />
-              </div>
-              <div className="cart__item__body">
-                <div className="cart__item__title">Мужские Кроссовки Nike Air Max 270</div>
-                <div className="cart__item__price">12 999 руб.</div>
-              </div>
-              <div className="cart__item__btn"></div>
-            </div>
+            {props.items.map((item, index) => (
+                <div className="cart__item" key={index}>
+                <div className="cart__item__image">
+                  <img width={70} height={70} src={item.image} alt="image1" />
+                </div>
+                <div className="cart__item__body">
+                  <div className="cart__item__title">{item.name}</div>
+                  <div className="cart__item__price">{item.price} руб.</div>
+                </div>
+                <div className="cart__item__btn" onClick={() => props.onDelete(item)}></div>
+              </div>              
+            ))}
           </div>
           <div className="drawer__bottom">
             <div className="cart__line">
