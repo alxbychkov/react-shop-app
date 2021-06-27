@@ -21,9 +21,9 @@ function App() {
 
 
   const addItemCart = (product) => {
-    console.log(product)
     if (cartItems.find(item => item.id === product.id)) {
-      setCartItems(prev => [...prev.filter(item => item.id !== product.id)])
+      const mockapi_id = cartItems.find(item => item.id === product.id)?.mockapi_id      
+      axios.delete(`https://60d72ef5307c300017a5f6f8.mockapi.io/cart/${mockapi_id}`, product).then(res => setCartItems(prev => [...prev.filter(item => item.id !== res.data.id)]))
     } else {
       axios.post('https://60d72ef5307c300017a5f6f8.mockapi.io/cart', product).then(res => setCartItems(prev => [...prev, res.data]))
     }
