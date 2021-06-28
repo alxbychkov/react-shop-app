@@ -1,8 +1,10 @@
 import React from 'react'
 import styles from './Card.module.scss'
+import { AppContex } from '../../App'
 
 function Card(props) {
-    const [isAdded, setIsAdded] = React.useState(props.inCart)
+    const {isItemAdded} = React.useContext(AppContex)
+    // const [isAdded, setIsAdded] = React.useState(props.inCart)
     const [inFavorite, setFavorite] = React.useState(props.inFavorite)
 
     const onFavoriteBtn = () => {
@@ -12,8 +14,10 @@ function Card(props) {
 
     const onClickBtn = () => {
         props.onClick(props)
-        setIsAdded(!isAdded)
+        // setIsAdded(!isAdded)
     }
+
+
 
     return (
         <div className={styles.card__item}>
@@ -29,7 +33,7 @@ function Card(props) {
                     <p className={styles.price__name}>Цена:</p>
                     <div className={styles.price__value}>{props.price} руб.</div>
                 </div>
-                <div className={`${styles.card__item__btn} ${isAdded ? styles.active : ''}`} onClick={onClickBtn}></div>
+                <div className={`${styles.card__item__btn} ${isItemAdded(props.id) ? styles.active : ''}`} onClick={onClickBtn}></div>
             </div>
         </div>
     )

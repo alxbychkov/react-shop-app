@@ -1,7 +1,9 @@
 import Card from "../components/Card"
 import Loader from "../components/Loader"
+import React from "react"
 
-function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites, cartItems, favorites, loading}) {
+function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites, favorites, loading}) {
+
     return (
         <div className="content">
             <div className="slider"></div>
@@ -14,14 +16,15 @@ function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites
             </div>
             <div className="sneakers__wrapper">
                 {
-                    loading ? [...Array(10)].map(() => <Loader/>) :
+                    loading ? [...Array(10)].map((i, j) => <Loader key={j}/>) :
                     sneakers.filter(obj => obj.name.toLowerCase().includes(searchValue.toLowerCase())).map((obj,index) => (
                         <Card
                             id={obj.id}
                             name={obj.name}
                             price={obj.price}
                             image={obj.image}
-                            inCart={cartItems.find(item => item.id === obj.id) ? true : false}
+                            // inCart={cartItems.find(item => item.id === obj.id) ? true : false}
+                            // inCart={isItemAdded(obj.id)}
                             inFavorite={favorites.find(item => item.id === obj.id) ? true : false}
                             key={index}
                             onClick={product => addItemCart(product)}

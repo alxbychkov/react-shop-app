@@ -6,6 +6,9 @@ import React from "react"
 import axios from "axios"
 import { Route } from "react-router"
 
+
+export const AppContex = React.createContext({})
+
 function App() {
   const [cartOpen, setCartOpen] = React.useState(false)
   const [cartItems, setCartItems] = React.useState([])
@@ -63,7 +66,12 @@ function App() {
     setSearchValue(e.target.value)
   }
 
+  const isItemAdded = (id) => {
+    return cartItems.some(obj => obj.id === id)
+  }
+
   return (
+    <AppContex.Provider value={{cartItems, favorites, sneakers, deleteCartItem, isItemAdded }}>
     <div className="wrapper">
       {cartOpen && <Drawer items={cartItems} onDelete={(product) => deleteCartItem(product)} onClose={() => setCartOpen(false)}/>}
       <Header 
@@ -84,12 +92,12 @@ function App() {
       </Route>
       <Route path="/favorites" exact>
         <Favorite 
-          sneakers={favorites}
           addItemCart={addItemCart}
           addToFavorites={addToFavorites}  
         />
       </Route>
     </div>
+    </AppContex.Provider>
   );
 }
 

@@ -1,8 +1,12 @@
 import Card from "../components/Card"
 import { Link } from "react-router-dom"
+import React from "react"
+import { AppContex } from "../App"
 
-function Favorite({sneakers, addToFavorites, addItemCart}) {
-    if (sneakers.length > 0)
+function Favorite({addToFavorites, addItemCart}) {
+    const {favorites} = React.useContext(AppContex)
+    
+    if (favorites.length > 0)
         return (
             <div className="content">
                 <div className="content__head inner">
@@ -13,7 +17,7 @@ function Favorite({sneakers, addToFavorites, addItemCart}) {
                 </div>
                 <div className="sneakers__wrapper">
                 {
-                    sneakers.map((obj,index) => (
+                    favorites.map((obj,index) => (
                         <Card
                         id={obj.id}
                         name={obj.name}
