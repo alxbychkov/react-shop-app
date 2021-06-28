@@ -1,6 +1,7 @@
 import Card from "../components/Card"
+import Loader from "../components/Loader"
 
-function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites, cartItems, favorites}) {
+function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites, cartItems, favorites, loading}) {
     return (
         <div className="content">
             <div className="slider"></div>
@@ -13,19 +14,21 @@ function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites
             </div>
             <div className="sneakers__wrapper">
                 {
-                sneakers.filter(obj => obj.name.toLowerCase().includes(searchValue.toLowerCase())).map((obj,index) => (
-                    <Card
-                    id={obj.id}
-                    name={obj.name}
-                    price={obj.price}
-                    image={obj.image}
-                    inCart={cartItems.find(item => item.id === obj.id) ? true : false}
-                    inFavorite={favorites.find(item => item.id === obj.id) ? true : false}
-                    key={index}
-                    onClick={product => addItemCart(product)}
-                    onFavorite={product => addToFavorites(product)}
-                    />
-                ))
+                    loading ? [...Array(10)].map(() => <Loader/>) :
+                    sneakers.filter(obj => obj.name.toLowerCase().includes(searchValue.toLowerCase())).map((obj,index) => (
+                        <Card
+                            id={obj.id}
+                            name={obj.name}
+                            price={obj.price}
+                            image={obj.image}
+                            inCart={cartItems.find(item => item.id === obj.id) ? true : false}
+                            inFavorite={favorites.find(item => item.id === obj.id) ? true : false}
+                            key={index}
+                            onClick={product => addItemCart(product)}
+                            onFavorite={product => addToFavorites(product)}
+                        />
+
+                    ))
                 }
             </div>
         </div>

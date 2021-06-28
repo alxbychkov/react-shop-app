@@ -12,11 +12,22 @@ function App() {
   const [favorites, setFavorites] = React.useState([])
   const [sneakers, setSneakers] = React.useState([])
   const [searchValue, setSearchValue] = React.useState('')
+  const [isLoading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/items').then(res => setSneakers(res.data))
-    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/cart').then(res => setCartItems(res.data))
-    axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/favorites').then(res => setFavorites(res.data))
+    async function loadData() {
+      const favData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/favorites')
+      const cartData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/cart')
+      const itemsData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/items')
+
+      setLoading(false)
+
+      setFavorites(favData.data)
+      setCartItems(cartData.data)
+      setSneakers(itemsData.data)
+    }
+
+    loadData()
   }, [])
 
 
@@ -55,7 +66,10 @@ function App() {
   return (
     <div className="wrapper">
       {cartOpen && <Drawer items={cartItems} onDelete={(product) => deleteCartItem(product)} onClose={() => setCartOpen(false)}/>}
-      <Header onClickCart={() => setCartOpen(true)}/>
+      <Header 
+        onClickCart={() => setCartOpen(true)}
+        total={cartItems.reduce((a, b) => (a + b.price), 0)}
+      />
       <Route path="/" exact>
         <Home
           sneakers={sneakers}
@@ -65,6 +79,7 @@ function App() {
           onChangeInput={onChangeInput}
           favorites={favorites}
           cartItems={cartItems}
+          loading={isLoading}
         />
       </Route>
       <Route path="/favorites" exact>

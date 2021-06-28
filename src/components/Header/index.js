@@ -16,7 +16,9 @@ function Header(props) {
         <div className={styles.user}>
           <div className={styles.user__basket} onClick={props.onClickCart}>
             <div className={styles.basket__icon}></div>
-            <div>1250 руб.</div>
+            {
+              props.total !== 0 && <div>{props.total} руб.</div>
+            }
           </div>
           <Link to="/favorites"><div className={styles.favorite__icon}></div></Link>
           <div className={styles.login__icon}></div>
