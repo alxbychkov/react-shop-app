@@ -1,9 +1,33 @@
 import React from "react"
 import { AppContex } from "../App"
 import Info from "./Info"
+import axios from "axios"
+
+const delay = (ms) => new Promise(res => setTimeout(res, ms))
 
 function Drawer(props) {
-    const {deleteCartItem} = React.useContext(AppContex)
+    const {deleteCartItem, setCartItems, cartItems} = React.useContext(AppContex)
+    const [isOrder, setOrder] = React.useState(false)
+    const [isLoading, setLoading] = React.useState(false)
+    const [orderId, setOrderId] = React.useState(null)
+    const sendOrder = async () => {
+      try {
+        setLoading(true)
+        const orderResult = await axios.post('https://60d72ef5307c300017a5f6f8.mockapi.io/order', {items: cartItems})
+        setOrderId(orderResult.data.order_id)
+        setOrder(true)
+        setCartItems([])
+        for(let i=0; i<cartItems.length; i++) {
+          const item = cartItems[i]
+          await axios.delete(`https://60d72ef5307c300017a5f6f8.mockapi.io/cart/${item.mockapi_id}`)
+          await delay(1000)
+        }
+
+      } catch (e) {
+        console.error('Error: ', e)
+      }
+      setLoading(false)
+    }
 
     return (
         <div className="overlay" onClick={props.onClose}>
@@ -43,28 +67,17 @@ function Drawer(props) {
                         parseInt(props.items.reduce((a, b) => a + b.price, 0)*0.05)
                       } руб.</p>
                     </div>
-                    <div className="cart__line__btn">Оформить заказ</div>
+                    <div className={`cart__line__btn${isLoading ? ' disabled' : ''}`} onClick={sendOrder}>Оформить заказ</div>
                   </div>
               </div> 
               :
               <Info
-                title={'Корзина пустая'}
-                description={'Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.'}
-                image={'/img/bag.png'}
+                title={isOrder ? 'Заказ оформлен!' : 'Корзина пустая'}
+                description={isOrder ? `Ваш заказ #${orderId && orderId} скоро будет передан курьерской доставке` : 'Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.'}
+                image={isOrder ? '/img/done.png' : '/img/bag.png'}
+                isOrder={isOrder}
+                onClose={props.onClose}
               />
-            //   <div className="drawer empty" onClick={(e) => e.stopPropagation()}>
-            //     <div className="drawer__head">
-            //       <h2 className="section__title">Корзина</h2>
-            //     </div>
-            //   <div className="cart__wrapper">
-            //     <img width={120} height={120} src="/img/bag.png" alt="basket" />
-            //     <h2 className="section__title">Корзина пустая</h2>
-            //     <p>Добавьте хотя бы одну пару кроссовок, чтобы сделать заказ.</p>
-            //     <div className="drawer__bottom">
-            //       <div className="cart__line__btn back" onClick={props.onClose}>Вернуться назад</div>
-            //     </div>
-            //   </div>
-            // </div>
           }
       </div>
     )

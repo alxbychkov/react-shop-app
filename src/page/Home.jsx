@@ -3,7 +3,6 @@ import Loader from "../components/Loader"
 import React from "react"
 
 function Home({searchValue, onChangeInput, sneakers, addItemCart, addToFavorites, favorites, loading}) {
-
     return (
         <div className="content">
             <div className="slider"></div>

@@ -21,7 +21,7 @@ function Header(props) {
             }
           </div>
           <Link to="/favorites"><div className={styles.favorite__icon}></div></Link>
-          <div className={styles.login__icon}></div>
+          <Link to="/orders"><div className={styles.login__icon}></div></Link>
         </div>
       </header>
     )

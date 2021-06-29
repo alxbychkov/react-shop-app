@@ -1,5 +1,6 @@
 import Home from "./page/Home"
 import Favorite from "./page/Favorite"
+import Order from "./page/Order"
 import Header from "./components/Header"
 import Drawer from "./components/Drawer"
 import React from "react"
@@ -13,6 +14,7 @@ function App() {
   const [cartOpen, setCartOpen] = React.useState(false)
   const [cartItems, setCartItems] = React.useState([])
   const [favorites, setFavorites] = React.useState([])
+  const [orders, setOrders] = React.useState([])
   const [sneakers, setSneakers] = React.useState([])
   const [searchValue, setSearchValue] = React.useState('')
   const [isLoading, setLoading] = React.useState(true)
@@ -21,12 +23,14 @@ function App() {
     async function loadData() {
       const favData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/favorites')
       const cartData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/cart')
+      const ordersData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/order')
       const itemsData = await axios.get('https://60d72ef5307c300017a5f6f8.mockapi.io/items')
 
       setLoading(false)
 
       setFavorites(favData.data)
       setCartItems(cartData.data)
+      setOrders(ordersData.data)
       setSneakers(itemsData.data)
     }
 
@@ -71,7 +75,7 @@ function App() {
   }
 
   return (
-    <AppContex.Provider value={{cartItems, favorites, sneakers, deleteCartItem, isItemAdded }}>
+    <AppContex.Provider value={{cartItems, setCartItems, favorites, sneakers, deleteCartItem, isItemAdded, orders }}>
     <div className="wrapper">
       {cartOpen && <Drawer items={cartItems} onDelete={(product) => deleteCartItem(product)} onClose={() => setCartOpen(false)}/>}
       <Header 
@@ -95,6 +99,9 @@ function App() {
           addItemCart={addItemCart}
           addToFavorites={addToFavorites}  
         />
+      </Route>
+      <Route path="/orders" exact>
+        <Order/>
       </Route>
     </div>
     </AppContex.Provider>

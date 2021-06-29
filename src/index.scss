@@ -286,6 +286,24 @@ body, html {
   }
 }
 
+.cart__line__btn.disabled {
+  background: #BEBEBE !important;
+  animation: loading 1s ease-in infinite;
+  cursor: default !important;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .cart__line__btn.back {
   background: #9DD558;
   border-radius: 18px;
@@ -347,4 +365,12 @@ body, html {
     margin: auto;
     padding-top: 3px;
   }
+}
+
+.section__description {
+  opacity: 0.4;
+}
+
+.green__title {
+  color: #87C20A;
 }
